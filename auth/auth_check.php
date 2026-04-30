@@ -79,12 +79,24 @@ function startSecureSession(): void
     }
 
     $isHttps = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    
+    // Extract domain for cookie (remove port number)
+    $domain = parse_url('http://' . $host, PHP_URL_HOST) ?: '';
+    
+    // For localhost, don't set domain (cookie works on localhost only)
+    if ($domain === 'localhost' || $domain === '127.0.0.1') {
+        $domain = '';
+    }
 
     session_name('HMSSESSID');
+    
+    $sessionPath = appBasePath() === '' ? '/' : appBasePath();
+    
     session_set_cookie_params([
         'lifetime' => 0,
-        'path' => appBasePath() === '' ? '/' : appBasePath(),
-        'domain' => '',
+        'path' => $sessionPath,
+        'domain' => $domain,
         'secure' => $isHttps,
         'httponly' => true,
         'samesite' => 'Lax'

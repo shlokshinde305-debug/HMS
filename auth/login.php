@@ -133,4 +133,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 </div>
 
-<?php renderPageFooter(); ?>
+<?php 
+// Include debug info if requested (for troubleshooting)
+if (!empty($_GET['debug']) && $_GET['debug'] === '1') {
+    include __DIR__ . '/debug-info.php';
+}
+renderPageFooter(); ?>
